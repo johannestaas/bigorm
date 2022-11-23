@@ -1,0 +1,2 @@
+class BigORMError(ValueError):
+    pass

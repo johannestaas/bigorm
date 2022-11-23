@@ -1,0 +1,6 @@
+pre-commit
+pre-commit-hooks
+black
+flake8
+pytest
+tox

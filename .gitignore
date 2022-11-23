@@ -1,0 +1,16 @@
+syntax: glob
+.venv
+*.pyc
+*.log
+*__pycache__
+build/*
+bigorm.egg-info/*
+dist/*
+bigorm.egg*
+.tox/*
+.cache/*
+.ropeproject/*
+untracked/*
+*.swp
+*.pem
+*_rsa
