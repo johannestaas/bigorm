@@ -32,7 +32,6 @@ def _split_op(key: str) -> Tuple[str, CompOp]:
 
 
 class _Value:
-
     def __init__(self, value: Any):
         self.value = value
 
@@ -53,7 +52,6 @@ class _Value:
 
 
 class _Comparison:
-
     def __init__(self, lhs: str, op: CompOp, rhs: Any):
         self.lhs = lhs
         self.op = op
@@ -71,7 +69,6 @@ class _Comparison:
 
 
 class Count:
-
     def __init__(self, selected, *, name):
         self.selected = selected
         self.name = name
@@ -81,7 +78,6 @@ class Count:
 
 
 class _Selection:
-
     def __init__(self, selection: List[str]):
         self.selection = selection
 
@@ -98,7 +94,6 @@ class _Selection:
 
 
 class _Query:
-
     def __init__(
         self,
         limit_=None,
@@ -124,10 +119,7 @@ class _Query:
         }
 
     def filter(self, **kwargs):
-        comparisons = [
-            _Comparison._parse(key, val)
-            for key, val in kwargs.items()
-        ]
+        comparisons = [_Comparison._parse(key, val) for key, val in kwargs.items()]
         copy = self.copy()
         copy["filters"] = self.filters + [comparisons]
         return _Query(**copy)
@@ -167,7 +159,6 @@ class _Query:
 
 
 class _Table:
-
     def __init__(self, name: str, *, row_cls):
         split = name.split(".")
         if len(split) == 2:
@@ -178,10 +169,7 @@ class _Table:
             raise ValueError(f"name {name!r} did not describe project.dataset.table")
 
     def filter(self, **kwargs):
-        comparisons = [
-            _Comparison._parse(key, val)
-            for key, val in kwargs.items()
-        ]
+        comparisons = [_Comparison._parse(key, val) for key, val in kwargs.items()]
         return _Query(
             table=self,
             selection=_Selection(["*"]),
@@ -203,7 +191,6 @@ class _Table:
 
 
 class Client:
-
     def __init__(self, bq_client: Any):
         self._client = bq_client
 
@@ -214,7 +201,6 @@ class Client:
 
 
 def declare_row(klass) -> type:
-
     @classmethod
     def _columns(cls) -> Dict[str, Any]:
         return cls.__annotations__
