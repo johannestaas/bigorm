@@ -4,7 +4,7 @@ from typing import Dict, Any, Tuple, List
 from dataclasses import dataclass
 
 
-class Operator(Enum):
+class CompOp(Enum):
     EQ = "="
     NE = "!="
     GTE = ">="
@@ -12,16 +12,20 @@ class Operator(Enum):
     GT = ">"
     LT = "<"
     IN = "IN"
+    NIN = "NOT IN"
     LIKE = "LIKE"
+    NLIKE = "NOT LIKE"
+    IS = "IS"
+    NIS = "IS NOT"
 
 
-def _split_op(key: str) -> Tuple[str, Operator]:
+def _split_op(key: str) -> Tuple[str, CompOp]:
     *column_names, op = key.split("__")
     if not column_names:
         # like foo="bar", assume EQ
-        return [op], Operator.EQ
+        return [op], CompOp.EQ
     try:
-        op = Operator[op.upper()]
+        op = CompOp[op.upper()]
     except KeyError:
         raise ValueError(f"{op} does not appear to be a valid comparison operator")
     return column_names, op
@@ -37,10 +41,6 @@ class _Value:
             return str(self.value)
         elif isinstance(self.value, str):
             return json.dumps(self.value)
-            """
-            val = self.value.replace('"', '\\"')
-            return f'"{val}"'
-            """
         elif self.value is None:
             return "NULL"
         elif isinstance(self.value, Enum):
@@ -54,7 +54,7 @@ class _Value:
 
 class _Comparison:
 
-    def __init__(self, lhs: str, op: Operator, rhs: Any):
+    def __init__(self, lhs: str, op: CompOp, rhs: Any):
         self.lhs = lhs
         self.op = op
         self.rhs = rhs
@@ -66,13 +66,6 @@ class _Comparison:
 
     def sql(self) -> str:
         col_names = ".".join(self.lhs)
-        if self.rhs.value is None:
-            if self.op.value is Operator.EQ:
-                return f"({col_names} IS NULL"
-            elif self.op.value is Operator.NE:
-                return f"({col_names} IS NOT NULL"
-            else:
-                raise ValueError(f"cannot use {self.op.name} with NULL comparison")
         rhs = self.rhs.sql()
         return f"({col_names} {self.op.value} {rhs})"
 
