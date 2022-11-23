@@ -31,10 +31,6 @@ setup(
         # 'Development Status :: 7 - Inactive',
     ],
     install_requires=[
+        "google-cloud-bigquery",
     ],
-    entry_points={
-        'console_scripts': [
-            'bigorm=bigorm:main',
-        ],
-    },
 )
